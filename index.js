@@ -8,7 +8,7 @@ async function askQuestion() {
             type: "list",
             message: "What would you like to do?",
             name: "choice",
-            choices: ["View All Employees", "Add Employee", "Update Employee Role", "View All Roles", "View All Departments", "Add Department"],
+            choices: ["View All Employees", "Add Employee", "Update Employee Role", "View All Roles", "Add Role", "View All Departments", "Add Department"],
         },
     ]);
     switch (answer.choice) {
@@ -23,6 +23,9 @@ async function askQuestion() {
         }
         case "View All Roles": {
             return await viewAllRoles();
+        }
+        case "Add Role": {
+            return await addRole();
         }
         case "View All Departments": {
             return await viewAllDepartments();
@@ -42,18 +45,80 @@ function viewAllEmployees() {
 }
 
 // function to add an employee
-function addEmployee() {
-
+async function addEmployee() {
+    const answer = await inquirer.prompt([
+        {
+            type: "input",
+            message: "What is the employee's first name? ",
+            name: "firstName",
+        },
+        {
+            type: "input",
+            message: "What is the employee's last name? ",
+            name: "lastName",
+        },
+        {
+            type: "list",
+            message: "What is the employee's role? ",
+            name: "role",
+            choices: [/*TODO: list of roles*/],
+        },
+        {
+            type: "list",
+            message: "Who is the employee's manager? ",
+            name: "manager",
+            choices: [/*TODO: list of managers, include None if has no manager*/],
+        },
+    ]);
+    // TODO: add role to role table in employee database
+    return askQuestion();
 }
 
 // function to update an employee role
-function updateEmployeeRole() {
-
+async function updateEmployeeRole() {
+    const answer = await inquirer.prompt([
+        {
+            type: "list",
+            message: "Which employee's role do you want to update? ",
+            name: "updateEmployee",
+            choices: [/*TODO: list of employees*/],
+        },
+        {
+            type: "list",
+            message: "Which role do you want to assign the selected employee? ",
+            name: "updateRole",
+            choices: [/*TODO: list of roles*/],
+        },
+    ]);
 }
 
 // function to view all roles
 function viewAllRoles() {
 
+}
+
+// function to add a role
+async function addRole() {
+    const answer = await inquirer.prompt([
+        {
+            type: "input",
+            message: "What is the name of the role? ",
+            name: "roleName",
+        },
+        {
+            type: "input",
+            message: "What is the salary of the role? ",
+            name: "salary",
+        },
+        {
+            type: "list",
+            message: "Which department does the role belong to? ",
+            name: "departments",
+            choices: [/*TODO: list of departments*/],
+        },
+    ]);
+    // TODO: add role to role table in employee database
+    return askQuestion();
 }
 
 // function to view all departments
@@ -62,6 +127,14 @@ function viewAllDepartments() {
 }
 
 // function to add a department
-function addDepartment() {
-
+async function addDepartment() {
+    const answer = await inquirer.prompt([
+        {
+            type: "input",
+            message: "What is the name of the department? ",
+            name: "deptName",
+        },
+    ]);
+    // TODO: add department to department table in employee database
+    return askQuestion();
 }
