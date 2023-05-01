@@ -1,6 +1,10 @@
 const inquirer = require("inquirer");
 const mysql = require("mysql2");
 
+const { viewAllEmployees } = require("./query");
+const { viewAllRoles } = require("./query");
+const { viewAllDepartments } = require("./query");
+
 // main menu function to ask what to do in employee database
 async function askQuestion() {
     const answer = await inquirer.createPromptModule([
@@ -37,11 +41,6 @@ async function askQuestion() {
             return console.log("Finished");
         }
     }
-}
-
-// function to view all employees
-function viewAllEmployees() {
-
 }
 
 // function to add an employee
@@ -92,11 +91,6 @@ async function updateEmployeeRole() {
     ]);
 }
 
-// function to view all roles
-function viewAllRoles() {
-
-}
-
 // function to add a role
 async function addRole() {
     const answer = await inquirer.prompt([
@@ -119,11 +113,6 @@ async function addRole() {
     ]);
     // TODO: add role to role table in employee database
     return askQuestion();
-}
-
-// function to view all departments
-function viewAllDepartments() {
-
 }
 
 // function to add a department
