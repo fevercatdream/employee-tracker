@@ -1,3 +1,10 @@
+-- To correctly seed database
+-- run commands in the following order:
+-- SOURCE schema.sql
+-- SOURCE seeds-department.sql
+-- SOURCE seeds-role.sql
+-- SOURCE seeds-employee.sql
+
 USE employee_db;
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)

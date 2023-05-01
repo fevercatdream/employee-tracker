@@ -1,3 +1,10 @@
+-- To correctly seed database
+-- run commands in the following order:
+-- SOURCE schema.sql
+-- SOURCE seeds-department.sql
+-- SOURCE seeds-role.sql
+-- SOURCE seeds-employee.sql
+
 DROP DATABASE IF EXISTS employee_db;
 
 CREATE DATABASE employee_db;
