@@ -1,41 +1,55 @@
 const inquirer = require("inquirer");
 const mysql = require("mysql2");
+const _cTable = require('console.table');
 
-const { viewAllEmployees } = require("./query");
-const { viewAllRoles } = require("./query");
-const { viewAllDepartments } = require("./query");
+const { 
+    viewAllEmployees,
+    addEmployee,
+    updateEmployeeRole,
+    viewAllRoles,
+    addRole,
+    viewAllDepartments,
+    addDepartment
+ } = require("./query");
 
 // main menu function to ask what to do in employee database
 async function askQuestion() {
-    const answer = await inquirer.createPromptModule([
+    const answer = await inquirer.prompt([
         {
             type: "list",
             message: "What would you like to do?",
             name: "choice",
-            choices: ["View All Employees", "Add Employee", "Update Employee Role", "View All Roles", "Add Role", "View All Departments", "Add Department"],
+            choices: ["View All Employees", "Add Employee", "Update Employee Role", "View All Roles", "Add Role", "View All Departments", "Add Department", "Quit"],
         },
     ]);
     switch (answer.choice) {
         case "View All Employees": {
-            return await viewAllEmployees();
+            console.table(await viewAllEmployees());
+            return askQuestion();
         }
         case "Add Employee": {
-            return await addEmployee();
+            console.table(await addEmployee());
+            return askQuestion();
         }
         case "Update Employee Role": {
-            return await updateEmployeeRole();
+            console.table(await updateEmployeeRole());
+            return askQuestion();
         }
         case "View All Roles": {
-            return await viewAllRoles();
+            console.table(await viewAllRoles());
+            return askQuestion();
         }
         case "Add Role": {
-            return await addRole();
+            console.table(await addRole());
+            return askQuestion();
         }
         case "View All Departments": {
-            return await viewAllDepartments();
+            console.table(await viewAllDepartments());
+            return askQuestion();
         }
         case "Add Department": {
-            return await addDepartment();
+            console.table(await addDepartment());
+            return askQuestion();
         }
         default: {
             return console.log("Finished");
@@ -43,87 +57,4 @@ async function askQuestion() {
     }
 }
 
-// function to add an employee
-async function addEmployee() {
-    const answer = await inquirer.prompt([
-        {
-            type: "input",
-            message: "What is the employee's first name? ",
-            name: "firstName",
-        },
-        {
-            type: "input",
-            message: "What is the employee's last name? ",
-            name: "lastName",
-        },
-        {
-            type: "list",
-            message: "What is the employee's role? ",
-            name: "role",
-            choices: [/*TODO: list of roles*/],
-        },
-        {
-            type: "list",
-            message: "Who is the employee's manager? ",
-            name: "manager",
-            choices: [/*TODO: list of managers, include None if has no manager*/],
-        },
-    ]);
-    // TODO: add role to role table in employee database
-    return askQuestion();
-}
-
-// function to update an employee role
-async function updateEmployeeRole() {
-    const answer = await inquirer.prompt([
-        {
-            type: "list",
-            message: "Which employee's role do you want to update? ",
-            name: "updateEmployee",
-            choices: [/*TODO: list of employees*/],
-        },
-        {
-            type: "list",
-            message: "Which role do you want to assign the selected employee? ",
-            name: "updateRole",
-            choices: [/*TODO: list of roles*/],
-        },
-    ]);
-}
-
-// function to add a role
-async function addRole() {
-    const answer = await inquirer.prompt([
-        {
-            type: "input",
-            message: "What is the name of the role? ",
-            name: "roleName",
-        },
-        {
-            type: "input",
-            message: "What is the salary of the role? ",
-            name: "salary",
-        },
-        {
-            type: "list",
-            message: "Which department does the role belong to? ",
-            name: "departments",
-            choices: [/*TODO: list of departments*/],
-        },
-    ]);
-    // TODO: add role to role table in employee database
-    return askQuestion();
-}
-
-// function to add a department
-async function addDepartment() {
-    const answer = await inquirer.prompt([
-        {
-            type: "input",
-            message: "What is the name of the department? ",
-            name: "deptName",
-        },
-    ]);
-    // TODO: add department to department table in employee database
-    return askQuestion();
-}
+askQuestion();
