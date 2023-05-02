@@ -86,6 +86,7 @@ async function addEmployee() {
         },
     ]);
     // TODO: add role to role table in employee database
+    
     return askQuestion();
 }
 
