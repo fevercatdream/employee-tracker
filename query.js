@@ -2,6 +2,13 @@ const util = require("util");
 const inquirer = require("inquirer");
 const mysql = require("mysql2");
 
+const {
+    addEmployee,
+    updateEmployeeRole,
+    addRole,
+    addDepartment,
+} = require("./index");
+
 // connect to database
 const db = mysql.createConnection(
     {
@@ -57,59 +64,32 @@ async function viewAllEmployees() {
 //     });
 // }
 
-// function to add an employee
-async function addEmployee() {
-    const answer = await inquirer.prompt([
-        {
-            type: "input",
-            message: "What is the employee's first name? ",
-            name: "firstName",
-        },
-        {
-            type: "input",
-            message: "What is the employee's last name? ",
-            name: "lastName",
-        },
-        {
-            type: "list",
-            message: "What is the employee's role? ",
-            name: "role",
-            // async function mapped to role title
-            choices: [(await viewAllRoles()).map(role => role.title)],
-        },
-        {
-            type: "list",
-            message: "Who is the employee's manager? ",
-            name: "manager",
-            // async function mapped to employee name
-            choices: [`None`, ...(await viewAllEmployees()).map(employee => `${employee.first_name} ${employee.last_name}`)],
-        },
-    ]);
-    // TODO: add role to role table in employee database
-    
-    return askQuestion();
+// function query to insert an employee into the database
+// TODO: need to return bool
+async function insertEmployee() {
+    try {
+        const results = await queryAsync(`INSERT INTO employee (first_name, last_name, role_id, manager_id)
+        VALUES
+            (${addEmployee.firstName}, ${addEmployee.lastName}, ${addEmployee.role}, ${addEmployee.manager});`
+        );
+        return results;
+    } catch (err) {
+        console.error(err)
+    }
 }
 
-// function to update an employee role
-async function updateEmployeeRole() {
-    const answer = await inquirer.prompt([
-        {
-            type: "list",
-            message: "Which employee's role do you want to update? ",
-            name: "updateEmployee",
-            // async function mapped to employee name
-            choices: [(await viewAllEmployees()).map(employee => `${employee.first_name} ${employee.last_name}`)],
-        },
-        {
-            type: "list",
-            message: "Which role do you want to assign the selected employee? ",
-            name: "updateRole",
-            // async function mapped to role title
-            choices: [(await viewAllRoles()).map(role => role.title)],
-        },
-    ]);
-    // TODO: update employee role in employee table in employee database
-    return askQuestion();
+// function query to update an employee's role in the database
+// TODO: need to return bool
+async function updateEmployeeRoleQuery() {
+    try {
+        const results = await queryAsync(`UPDATE employee
+        SET role_id = ${updateEmployeeRole.updateRole}
+        WHERE CONCAT(employee.first_name, " ", employee.last_name) = ${updateEmployeeRole.updateEmployee};`
+        );
+        return results;
+    } catch (err) {
+        console.error(err)
+    }
 }
 
 // function to view all roles
@@ -126,29 +106,18 @@ async function viewAllRoles() {
     }
 }
 
-// function to add a role
-async function addRole() {
-    const answer = await inquirer.prompt([
-        {
-            type: "input",
-            message: "What is the name of the role? ",
-            name: "roleName",
-        },
-        {
-            type: "input",
-            message: "What is the salary of the role? ",
-            name: "salary",
-        },
-        {
-            type: "list",
-            message: "Which department does the role belong to? ",
-            name: "departments",
-            // async function mapped to department name
-            choices: [(await viewAllDepartments()).map(department => department.name)],
-        },
-    ]);
-    // TODO: add role to role table in employee database
-    return askQuestion();
+// function query to insert a role into the database
+// TODO: need to return bool
+async function insertRole() {
+    try {
+        const results = await queryAsync(`INSERT INTO role (title, department_id, salary)
+        VALUES
+            (${addRole.roleName}, ${addRole.department}, ${addRole.salary});`
+        );
+        return results;
+    } catch (err) {
+        console.error(err)
+    }    
 }
 
 // function to view all departments
@@ -164,23 +133,24 @@ async function viewAllDepartments() {
     }
 }
 
-// function to add a department
-async function addDepartment() {
-    const answer = await inquirer.prompt([
-        {
-            type: "input",
-            message: "What is the name of the department? ",
-            name: "deptName",
-        },
-    ]);
-    // TODO: add department to department table in employee database
-    return askQuestion();
+// function query to insert a department into the database
+// TODO: need to return bool
+async function insertDepartment() {
+    try {
+        const results = await queryAsync(`INSERT INTO department (name)
+        VALUES
+            (${addDepartment.deptName});`
+        );
+        return results;
+    } catch (err) {
+        console.error(err)
+    }    
 }
 
 module.exports.viewAllEmployees = viewAllEmployees;
-module.exports.addEmployee = addEmployee;
-module.exports.updateEmployeeRole = updateEmployeeRole;
+module.exports.insertEmployee = insertEmployee;
+module.exports.updateEmployeeRoleQuery = updateEmployeeRoleQuery;
 module.exports.viewAllRoles = viewAllRoles;
-module.exports.addRole = addRole;
+module.exports.insertRole = insertRole;
 module.exports.viewAllDepartments = viewAllDepartments;
-module.exports.addDepartment = addDepartment;
+module.exports.insertDepartment = insertDepartment;

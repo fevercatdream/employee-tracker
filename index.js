@@ -4,12 +4,12 @@ const _cTable = require('console.table');
 
 const { 
     viewAllEmployees,
-    addEmployee,
-    updateEmployeeRole,
+    insertEmployee,
+    updateEmployeeRoleQuery,
     viewAllRoles,
-    addRole,
+    insertRole,
     viewAllDepartments,
-    addDepartment
+    insertDepartment,
  } = require("./query");
 
 // main menu function to ask what to do in employee database
@@ -57,4 +57,114 @@ async function askQuestion() {
     }
 }
 
+// function to add an employee
+async function addEmployee() {
+    const answer = await inquirer.prompt([
+        {
+            type: "input",
+            message: "What is the employee's first name? ",
+            name: "firstName",
+        },
+        {
+            type: "input",
+            message: "What is the employee's last name? ",
+            name: "lastName",
+        },
+        {
+            type: "list",
+            message: "What is the employee's role? ",
+            name: "role",
+            // async function mapped to role title
+            choices: [(await viewAllRoles()).map(role => role.title)],
+        },
+        {
+            type: "list",
+            message: "Who is the employee's manager? ",
+            name: "manager",
+            // async function mapped to employee name
+            choices: [`None`, ...(await viewAllEmployees()).map(employee => `${employee.first_name} ${employee.last_name}`)],
+        },
+    ]);
+    if (insertEmployee()) {
+        console.log(`Added ${employee.first_name} ${employee.last_name} to the database`);
+    } else {
+        console.error(err)
+    }
+
+}
+
+// function to update an employee role
+async function updateEmployeeRole() {
+    const answer = await inquirer.prompt([
+        {
+            type: "list",
+            message: "Which employee's role do you want to update? ",
+            name: "updateEmployee",
+            // async function mapped to employee name
+            choices: [(await viewAllEmployees()).map(employee => `${employee.first_name} ${employee.last_name}`)],
+        },
+        {
+            type: "list",
+            message: "Which role do you want to assign the selected employee? ",
+            name: "updateRole",
+            // async function mapped to role title
+            choices: [(await viewAllRoles()).map(role => role.title)],
+        },
+    ]);
+    if (updateEmployeeRoleQuery()) {
+        console.log(`Updated employee's role`);
+    } else {
+        console.error(err)
+    }
+}
+
+// function to add a role
+async function addRole() {
+    const answer = await inquirer.prompt([
+        {
+            type: "input",
+            message: "What is the name of the role? ",
+            name: "roleName",
+        },
+        {
+            type: "input",
+            message: "What is the salary of the role? ",
+            name: "salary",
+        },
+        {
+            type: "list",
+            message: "Which department does the role belong to? ",
+            name: "department",
+            // async function mapped to department name
+            choices: [(await viewAllDepartments()).map(department => department.name)],
+        },
+    ]);
+    if (insertRole()) {
+        console.log(`Added ${role.title} to the database`);
+    } else {
+        console.error(err)
+    };
+}
+
+// function to add a department
+async function addDepartment() {
+    const answer = await inquirer.prompt([
+        {
+            type: "input",
+            message: "What is the name of the department? ",
+            name: "deptName",
+        },
+    ]);
+    if (insertDepartment()) {
+        console.log(`Added ${department.name} to the database`);
+    } else {
+        console.error(err)
+    };
+}
+
 askQuestion();
+
+module.exports.addEmployee = addEmployee;
+module.exports.updateEmployeeRole = updateEmployeeRole;
+module.exports.addRole = addRole;
+module.exports.addDepartment = addDepartment;
