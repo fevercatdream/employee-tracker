@@ -146,6 +146,18 @@ async function viewEmployeesByDeptQuery(department) {
     }
 }
 
+// function query to delete an employee from the database
+async function deleteEmployeesQuery(delEmployee) {
+    try {
+        const results = await queryAsync(`DELETE FROM employee
+        WHERE CONCAT(employee.first_name, " ", employee.last_name) = ?;`, [delEmployee]);
+        return true;
+    } catch (err) {
+        console.error(err);
+        return false;
+    }
+}
+
 // function query function to view total utilized budget of a department by summing employee's salaries
 async function viewDeptBudgetQuery(department) {
     try {
@@ -190,6 +202,18 @@ async function insertRole(role, dept, salary) {
     }    
 }
 
+// function query to delete a role from the database
+async function deleteRoleQuery(delRole) {
+    try {
+        const results = await queryAsync(`DELETE FROM role
+        WHERE role.title = ?;`, [delRole]);
+        return true;
+    } catch (err) {
+        console.error(err);
+        return false;
+    }
+}
+
 // function to view all departments
 async function viewAllDepartments() {
     try {
@@ -215,14 +239,28 @@ async function insertDepartment(dept_name) {
     }    
 }
 
+async function deleteDepartmentQuery(delDept) {
+    try {
+        const results = await queryAsync(`DELETE FROM department
+        WHERE department.name = ?;`, [delDept]);
+        return true;
+    } catch (err) {
+        console.error(err);
+        return false;
+    }
+}
+
 module.exports.viewAllEmployees = viewAllEmployees;
 module.exports.insertEmployee = insertEmployee;
 module.exports.updateEmployeeRoleQuery = updateEmployeeRoleQuery;
 module.exports.updateEmployeeManagerQuery = updateEmployeeManagerQuery;
 module.exports.viewEmployeesByManagerQuery = viewEmployeesByManagerQuery;
 module.exports.viewEmployeesByDeptQuery = viewEmployeesByDeptQuery;
+module.exports.deleteEmployeesQuery = deleteEmployeesQuery;
 module.exports.viewDeptBudgetQuery = viewDeptBudgetQuery;
 module.exports.viewAllRoles = viewAllRoles;
 module.exports.insertRole = insertRole;
+module.exports.deleteRoleQuery = deleteRoleQuery;
 module.exports.viewAllDepartments = viewAllDepartments;
 module.exports.insertDepartment = insertDepartment;
+module.exports.deleteDepartmentQuery = deleteDepartmentQuery;

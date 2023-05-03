@@ -9,11 +9,14 @@ const {
     updateEmployeeManagerQuery,
     viewEmployeesByManagerQuery,
     viewEmployeesByDeptQuery,
+    deleteEmployeesQuery,
     viewDeptBudgetQuery,
     viewAllRoles,
     insertRole,
+    deleteRoleQuery,
     viewAllDepartments,
     insertDepartment,
+    deleteDepartmentQuery,
  } = require("./query");
 
 // main menu function to ask what to do in employee database
@@ -30,11 +33,14 @@ async function askQuestion() {
                 "Update Employee Manager", 
                 "View Employees By Manager", 
                 "View Employees By Department",
+                "Delete Employee",
                 "View All Roles", 
                 "Add Role", 
+                "Delete Role",
                 "View All Departments",
                 "View Department Budget", 
                 "Add Department", 
+                "Delete Department",
                 "Quit"
             ],
         },
@@ -64,12 +70,20 @@ async function askQuestion() {
             console.table(await viewEmployeesByDept());
             return askQuestion();
         }
+        case "Delete Employee": {
+            console.table(await deleteEmployee());
+            return askQuestion();
+        }
         case "View All Roles": {
             console.table(await viewAllRoles());
             return askQuestion();
         }
         case "Add Role": {
             console.table(await addRole());
+            return askQuestion();
+        }
+        case "Delete Role": {
+            console.table(await deleteRole());
             return askQuestion();
         }
         case "View All Departments": {
@@ -82,6 +96,10 @@ async function askQuestion() {
         }
         case "Add Department": {
             console.table(await addDepartment());
+            return askQuestion();
+        }
+        case "Delete Department": {
+            console.table(await deleteDepartment());
             return askQuestion();
         }
         default: {
@@ -205,6 +223,21 @@ async function viewEmployeesByDept() {
     console.table(results);
 }
 
+// function to delete an employee
+async function deleteEmployee() {
+    const answer = await inquirer.prompt([
+        {
+            type: "list",
+            message: "Select employee to delete ",
+            name: "delEmployee",
+            // async function mapped to employee name
+            choices: (await viewAllEmployees()).map(employee => `${employee.first_name} ${employee.last_name}`),
+        },
+    ]);
+    const results = await deleteEmployeesQuery(answer.delEmployee);
+    console.log(`Employee deleted`);
+}
+
 // function to add a role
 async function addRole() {
     const answer = await inquirer.prompt([
@@ -228,6 +261,22 @@ async function addRole() {
     ]);
     if (insertRole(answer.roleName, answer.department, answer.salary)) {
         console.log(`Added ${answer.roleName} to the database`);
+    }
+}
+
+// function to delete a role
+async function deleteRole() {
+    const answer = await inquirer.prompt([
+        {
+            type: "list",
+            message: "Select a role to delete? ",
+            name: "delRole",
+            // async function mapped to role title
+            choices: (await viewAllRoles()).map(role => role.title),
+        },
+    ]);
+    if (deleteRoleQuery(answer.delRole)) {
+        console.log(`Role deleted`);
     }
 }
 
@@ -262,13 +311,20 @@ async function addDepartment() {
     }
 }
 
-askQuestion();
+// function to delete a department
+async function deleteDepartment() {
+    const answer = await inquirer.prompt([
+        {
+            type: "list",
+            message: "Select a department to delete? ",
+            name: "delDept",
+            // async function mapped to department name
+            choices: (await viewAllDepartments()).map(department => department.department),
+        },
+    ]);
+    if (deleteDepartmentQuery(answer.delDept)) {
+        console.log(`Department deleted`);
+    }
+}
 
-module.exports.addEmployee = addEmployee;
-module.exports.updateEmployeeRole = updateEmployeeRole;
-module.exports.updateEmployeeManager = updateEmployeeManager;
-module.exports.viewEmployeesByManager = viewEmployeesByManager;
-module.exports.viewEmployeesByDept = viewEmployeesByDept;
-module.exports.viewDeptBudget = viewDeptBudget;
-module.exports.addRole = addRole;
-module.exports.addDepartment = addDepartment;
+askQuestion();
