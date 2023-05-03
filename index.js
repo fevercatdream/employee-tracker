@@ -6,6 +6,8 @@ const {
     viewAllEmployees,
     insertEmployee,
     updateEmployeeRoleQuery,
+    updateEmployeeManagerQuery,
+    viewEmployeesByManager,
     viewAllRoles,
     insertRole,
     viewAllDepartments,
@@ -19,7 +21,7 @@ async function askQuestion() {
             type: "list",
             message: "What would you like to do?",
             name: "choice",
-            choices: ["View All Employees", "Add Employee", "Update Employee Role", "View All Roles", "Add Role", "View All Departments", "Add Department", "Quit"],
+            choices: ["View All Employees", "Add Employee", "Update Employee Role", "Update Employee Manager", "View Employees By Manager","View All Roles", "Add Role", "View All Departments", "Add Department", "Quit"],
         },
     ]);
     switch (answer.choice) {
@@ -33,6 +35,14 @@ async function askQuestion() {
         }
         case "Update Employee Role": {
             console.table(await updateEmployeeRole());
+            return askQuestion();
+        }
+        case "Update Employee Manager": {
+            console.table(await updateEmployeeManager());
+            return askQuestion();
+        }
+        case "View Employees By Manager": {
+            console.table(await viewEmployeesByManager());
             return askQuestion();
         }
         case "View All Roles": {
@@ -85,7 +95,7 @@ async function addEmployee() {
             choices: [`None`, ...(await viewAllEmployees()).map(employee => `${employee.first_name} ${employee.last_name}`)],
         },
     ]);
-    if (insertEmployee()) {
+    if (insertEmployee(answer.firstName, answer.lastName, answer.role, answer.manager)) {
         console.log(`Added ${employee.first_name} ${employee.last_name} to the database`);
     } else {
         console.error(err)
@@ -111,11 +121,54 @@ async function updateEmployeeRole() {
             choices: [(await viewAllRoles()).map(role => role.title)],
         },
     ]);
-    if (updateEmployeeRoleQuery()) {
+    if (updateEmployeeRoleQuery(answer.updateRole, answer.updateEmployee)) {
         console.log(`Updated employee's role`);
     } else {
         console.error(err)
     }
+}
+
+// function to update an employee's manager
+async function updateEmployeeManager() {
+    const answer = await inquirer.prompt([
+        {
+            type: "list",
+            message: "On which employee do you want to update the manager? ",
+            name: "chooseEmployee",
+            // async function mapped to employee name
+            choices: [(await viewAllEmployees()).map(employee => `${employee.first_name} ${employee.last_name}`)],
+        },
+        {
+            type: "list",
+            message: "Which employee do you want to assign as manager to the selected employee? ",
+            name: "assignManager",
+            // async function mapped to employee name
+            choices: [(await viewAllEmployees()).map(manager => `${employee.first_name} ${employee.last_name}`)],
+        },
+    ]);
+    if (updateEmployeeManagerQuery(answer.assignManager, answer.chooseEmployee)) {
+        console.log(`Updated employee's manager`);
+    } else {
+        console.error(err)
+    }    
+}
+
+// function to view employees by manager
+async function viewEmployeesByManager() {
+    const answer = await inquirer.prompt([
+        {
+            type: "list",
+            message: "Select employee to see who they manage? ",
+            name: "chooseEmployee",
+            // async function mapped to employee name
+            choices: [(await viewAllEmployees()).map(employee => `${employee.first_name} ${employee.last_name}`)],
+        },
+    ]);
+    if (viewEmployeesByManagerQuery(answer.chooseEmployee)) {
+        console.log(`Employees by Manager`);
+    } else {
+        console.error(err)
+    }    
 }
 
 // function to add a role
@@ -139,7 +192,7 @@ async function addRole() {
             choices: [(await viewAllDepartments()).map(department => department.name)],
         },
     ]);
-    if (insertRole()) {
+    if (insertRole(answer.roleName, answer.department, answer.salary)) {
         console.log(`Added ${role.title} to the database`);
     } else {
         console.error(err)
@@ -155,7 +208,7 @@ async function addDepartment() {
             name: "deptName",
         },
     ]);
-    if (insertDepartment()) {
+    if (insertDepartment(answer.deptName)) {
         console.log(`Added ${department.name} to the database`);
     } else {
         console.error(err)
@@ -166,5 +219,7 @@ askQuestion();
 
 module.exports.addEmployee = addEmployee;
 module.exports.updateEmployeeRole = updateEmployeeRole;
+module.exports.updateEmployeeManager = updateEmployeeManager;
+module.exports.viewEmployeesByManager = viewEmployeesByManager;
 module.exports.addRole = addRole;
 module.exports.addDepartment = addDepartment;
