@@ -46,7 +46,7 @@ async function viewAllEmployees() {
         ORDER BY employee.id;`);
         return results;
     } catch (err) {
-        console.error(err)
+        console.error(err);
     }
 }
 
@@ -69,48 +69,46 @@ async function viewAllEmployees() {
 // }
 
 // function query to insert an employee into the database
-// TODO: need to return bool
 async function insertEmployee(first_name, last_name, role, manager) {
     try {
         const results = await queryAsync(`INSERT INTO employee (first_name, last_name, role_id, manager_id)
         VALUES
             ( ?, ?, ?, ?);`, [first_name, last_name, role, manager]);
-        return results;
+        return true;
     } catch (err) {
-        console.error(err)
+        console.error(err);
+        return false;
     }
 }
 
 // function query to update an employee's role in the database
-// TODO: need to return bool
 async function updateEmployeeRoleQuery(update_role, update_employee) {
     try {
         const results = await queryAsync(`UPDATE employee
         SET role_id = ?
         WHERE CONCAT(employee.first_name, " ", employee.last_name) = ?;`, [update_role, update_employee]);
-        return results;
+        return true;
     } catch (err) {
-        console.error(err)
+        console.error(err);
+        return false;
     }
 }
 
 // function query to update an employee's manager in the database
-// TODO: need to return bool
 async function updateEmployeeManagerQuery(assign_manager, choose_emp) {
     try {
         const results = await queryAsync(`UPDATE employee
         SET manager_id = ?
         WHERE CONCAT(employee.first_name, " ", employee.last_name) = ?;`, [assign_manager, choose_emp]);
-        return results;
+        return true;
     } catch (err) {
-        console.error(err)
+        console.error(err);
+        return false;
     }    
 }
 
 // function query to view employees by manager
-// TODO: need to return bool
 async function viewEmployeesByManagerQuery(manager) {
-    // console.log(db.config, "CONFIG");
     try {
         const results = await queryAsync(`SELECT CONCAT(manager.first_name, " ", manager.last_name) AS manager, employee.first_name, employee.last_name, title, department.name AS department, salary
         FROM employee
@@ -121,16 +119,15 @@ async function viewEmployeesByManagerQuery(manager) {
         LEFT JOIN employee AS manager
         ON employee.manager_id = manager.id
         WHERE CONCAT(manager.first_name, " ", manager.last_name) = ?;`, [manager]);
-        return results;
+        return true;
     } catch (err) {
-        console.error(err)
+        console.error(err);
+        return false;
     }
 }
 
 // function query to view employees by department
-// TODO: need to return bool
 async function viewEmployeesByDeptQuery(department) {
-    // console.log(db.config, "CONFIG");
     try {
         const results = await queryAsync(`SELECT employee.first_name, employee.last_name, title, department.name AS department, salary, CONCAT(manager.first_name, " ", manager.last_name) AS manager
         FROM employee
@@ -141,25 +138,25 @@ async function viewEmployeesByDeptQuery(department) {
         LEFT JOIN employee AS manager
         ON employee.manager_id = manager.id
         WHERE department.name = ?;`, [department]);
-        return results;
+        return true;
     } catch (err) {
-        console.error(err)
+        console.error(err);
+        return false;
     }
 }
 
 // function query function to view total utilized budget of a department by summing employee's salaries
-// TODO: need to return bool
 async function viewDeptBudgetQuery(department) {
-    // console.log(db.config, "CONFIG");
     try {
         const results = await queryAsync(`SELECT department.name AS department, SUM(salary) AS dept_budget
         FROM department
         JOIN role
         ON role.department_id = department.id
         WHERE department.name = ?;`, [department]);
-        return results;
+        return true;
     } catch (err) {
-        console.error(err)
+        console.error(err);
+        return false;
     }
 }
 
@@ -173,20 +170,20 @@ async function viewAllRoles() {
         ORDER BY role.id;`);
         return results;
     } catch (err) {
-        console.error(err)
+        console.error(err);
     }
 }
 
 // function query to insert a role into the database
-// TODO: need to return bool
 async function insertRole(role, dept, salary) {
     try {
         const results = await queryAsync(`INSERT INTO role (title, department_id, salary)
         VALUES
             (?, ?, ?);`, [role, dept, salary]);
-        return results;
+        return true;
     } catch (err) {
-        console.error(err)
+        console.error(err);
+        return false;
     }    
 }
 
@@ -197,22 +194,21 @@ async function viewAllDepartments() {
         FROM department
         ORDER BY department.id;`);
         return results;
-
     } catch (err) {
-        console.error(err)
+        console.error(err);
     }
 }
 
 // function query to insert a department into the database
-// TODO: need to return bool
 async function insertDepartment(dept_name) {
     try {
         const results = await queryAsync(`INSERT INTO department (name)
         VALUES
             (?);`, [dept_name]);
-        return results;
+        return true;
     } catch (err) {
-        console.error(err)
+        console.error(err);
+        return false;
     }    
 }
 

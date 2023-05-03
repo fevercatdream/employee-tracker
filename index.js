@@ -120,10 +120,7 @@ async function addEmployee() {
     ]);
     if (insertEmployee(answer.firstName, answer.lastName, answer.role, answer.manager)) {
         console.log(`Added ${employee.first_name} ${employee.last_name} to the database`);
-    } else {
-        console.error(err)
-    }
-
+    } 
 }
 
 // function to update an employee role
@@ -146,8 +143,6 @@ async function updateEmployeeRole() {
     ]);
     if (updateEmployeeRoleQuery(answer.updateRole, answer.updateEmployee)) {
         console.log(`Updated employee's role`);
-    } else {
-        console.error(err)
     }
 }
 
@@ -171,9 +166,7 @@ async function updateEmployeeManager() {
     ]);
     if (updateEmployeeManagerQuery(answer.assignManager, answer.chooseEmployee)) {
         console.log(`Updated employee's manager`);
-    } else {
-        console.error(err)
-    }    
+    }  
 }
 
 // function to view employees by manager
@@ -189,9 +182,7 @@ async function viewEmployeesByManager() {
     ]);
     if (viewEmployeesByManagerQuery(answer.chooseEmployee)) {
         console.log(`Employees by Manager`);
-    } else {
-        console.error(err)
-    }    
+    }   
 }
 
 // function to view employees by department
@@ -207,9 +198,7 @@ async function viewEmployeesByDept() {
     ]);
     if (viewEmployeesByDeptQuery(answer.chooseDept)) {
         console.log(`Employees by Department`);
-    } else {
-        console.error(err)
-    } 
+    }
 }
 
 // function to add a role
@@ -235,9 +224,7 @@ async function addRole() {
     ]);
     if (insertRole(answer.roleName, answer.department, answer.salary)) {
         console.log(`Added ${role.title} to the database`);
-    } else {
-        console.error(err)
-    };
+    }
 }
 
 // function to view total utilized budget of a department by summing employee's salaries
@@ -253,9 +240,7 @@ async function viewDeptBudget() {
     ]);
     if (viewDeptBudgetQuery(answer.chooseDept)) {
         console.log(`Employees by Department`);
-    } else {
-        console.error(err)
-    } 
+    }
 }
 
 // function to add a department
@@ -269,9 +254,7 @@ async function addDepartment() {
     ]);
     if (insertDepartment(answer.deptName)) {
         console.log(`Added ${department.name} to the database`);
-    } else {
-        console.error(err)
-    };
+    }
 }
 
 askQuestion();
