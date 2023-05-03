@@ -108,7 +108,7 @@ async function addEmployee() {
             message: "What is the employee's role? ",
             name: "role",
             // async function mapped to role title
-            choices: [(await viewAllRoles()).map(role => role.title)],
+            choices: (await viewAllRoles()).map(role => role.title),
         },
         {
             type: "list",
@@ -119,7 +119,7 @@ async function addEmployee() {
         },
     ]);
     if (insertEmployee(answer.firstName, answer.lastName, answer.role, answer.manager)) {
-        console.log(`Added ${employee.first_name} ${employee.last_name} to the database`);
+        console.log(`Added ${answer.firstName} ${answer.lastName} to the database`);
     } 
 }
 
@@ -131,14 +131,14 @@ async function updateEmployeeRole() {
             message: "Which employee's role do you want to update? ",
             name: "updateEmployee",
             // async function mapped to employee name
-            choices: [(await viewAllEmployees()).map(employee => `${employee.first_name} ${employee.last_name}`)],
+            choices: (await viewAllEmployees()).map(employee => `${employee.first_name} ${employee.last_name}`),
         },
         {
             type: "list",
             message: "Which role do you want to assign the selected employee? ",
             name: "updateRole",
             // async function mapped to role title
-            choices: [(await viewAllRoles()).map(role => role.title)],
+            choices: (await viewAllRoles()).map(role => role.title),
         },
     ]);
     if (updateEmployeeRoleQuery(answer.updateRole, answer.updateEmployee)) {
@@ -154,14 +154,14 @@ async function updateEmployeeManager() {
             message: "On which employee do you want to update the manager? ",
             name: "chooseEmployee",
             // async function mapped to employee name
-            choices: [(await viewAllEmployees()).map(employee => `${employee.first_name} ${employee.last_name}`)],
+            choices: (await viewAllEmployees()).map(employee => `${employee.first_name} ${employee.last_name}`),
         },
         {
             type: "list",
             message: "Which employee do you want to assign as manager to the selected employee? ",
             name: "assignManager",
             // async function mapped to employee name
-            choices: [(await viewAllEmployees()).map(manager => `${employee.first_name} ${employee.last_name}`)],
+            choices: (await viewAllEmployees()).map(manager => `${manager.first_name} ${manager.last_name}`),
         },
     ]);
     if (updateEmployeeManagerQuery(answer.assignManager, answer.chooseEmployee)) {
@@ -177,12 +177,16 @@ async function viewEmployeesByManager() {
             message: "Select employee to see who they manage? ",
             name: "chooseEmployee",
             // async function mapped to employee name
-            choices: [(await viewAllEmployees()).map(employee => `${employee.first_name} ${employee.last_name}`)],
+            choices: (await viewAllEmployees()).map(employee => `${employee.first_name} ${employee.last_name}`),
         },
     ]);
-    if (viewEmployeesByManagerQuery(answer.chooseEmployee)) {
+    const results = await viewEmployeesByManagerQuery(answer.chooseEmployee);
+    if (results.length === 0) {
+        console.log(`This employee is not a manager`);
+    } else {
         console.log(`Employees by Manager`);
-    }   
+        console.table(results);  
+    }
 }
 
 // function to view employees by department
@@ -193,12 +197,12 @@ async function viewEmployeesByDept() {
             message: "Select department to see employees? ",
             name: "chooseDept",
             // async function mapped to department name
-            choices: [(await viewAllDepartments()).map(department => department.name)],
+            choices: (await viewAllDepartments()).map(department => department.department),
         },
     ]);
-    if (viewEmployeesByDeptQuery(answer.chooseDept)) {
-        console.log(`Employees by Department`);
-    }
+    const results = await viewEmployeesByDeptQuery(answer.chooseDept);
+    console.log(`Employees by Department`);
+    console.table(results);
 }
 
 // function to add a role
@@ -219,11 +223,11 @@ async function addRole() {
             message: "Which department does the role belong to? ",
             name: "department",
             // async function mapped to department name
-            choices: [(await viewAllDepartments()).map(department => department.name)],
+            choices: (await viewAllDepartments()).map(department => department.department),
         },
     ]);
     if (insertRole(answer.roleName, answer.department, answer.salary)) {
-        console.log(`Added ${role.title} to the database`);
+        console.log(`Added ${answer.roleName} to the database`);
     }
 }
 
@@ -235,12 +239,13 @@ async function viewDeptBudget() {
             message: "Select department to see budget? ",
             name: "chooseDept",
             // async function mapped to department name
-            choices: [(await viewAllDepartments()).map(department => department.name)],
+            choices: (await viewAllDepartments()).map(department => department.department),
         },
     ]);
-    if (viewDeptBudgetQuery(answer.chooseDept)) {
-        console.log(`Employees by Department`);
-    }
+    const results = await viewDeptBudgetQuery(answer.chooseDept);
+    console.log(`Employees by Department`);
+    console.table(results);
+
 }
 
 // function to add a department
@@ -253,7 +258,7 @@ async function addDepartment() {
         },
     ]);
     if (insertDepartment(answer.deptName)) {
-        console.log(`Added ${department.name} to the database`);
+        console.log(`Added ${answer.deptName} to the database`);
     }
 }
 
