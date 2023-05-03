@@ -7,6 +7,7 @@ const {
     updateEmployeeRole,
     updateEmployeeManager,
     viewEmployeesByManager,
+    viewEmployeesByDept,
     addRole,
     addDepartment,
 } = require("./index");
@@ -106,7 +107,7 @@ async function updateEmployeeManagerQuery(assign_manager, choose_emp) {
 }
 
 // function query to view employees by manager
-// TODO: need to return bool, need to show employees under manager
+// TODO: need to return bool
 async function viewEmployeesByManagerQuery(manager) {
     // console.log(db.config, "CONFIG");
     try {
@@ -119,6 +120,26 @@ async function viewEmployeesByManagerQuery(manager) {
         LEFT JOIN employee AS manager
         ON employee.manager_id = manager.id
         WHERE CONCAT(manager.first_name, " ", manager.last_name) = ?;`, [manager]);
+        return results;
+    } catch (err) {
+        console.error(err)
+    }
+}
+
+// function query to view employees by department
+// TODO: need to return bool
+async function viewEmployeesByDeptQuery(department) {
+    // console.log(db.config, "CONFIG");
+    try {
+        const results = await queryAsync(`SELECT CONCAT(manager.first_name, " ", manager.last_name) AS manager, employee.first_name, employee.last_name, title, department.name AS department, salary
+        FROM employee
+        JOIN role
+        ON employee.role_id = role.id
+        JOIN department
+        ON role.department_id = department.id
+        LEFT JOIN employee AS manager
+        ON employee.manager_id = manager.id
+        WHERE department.name = ?;`, [department]);
         return results;
     } catch (err) {
         console.error(err)
@@ -183,6 +204,7 @@ module.exports.insertEmployee = insertEmployee;
 module.exports.updateEmployeeRoleQuery = updateEmployeeRoleQuery;
 module.exports.updateEmployeeManagerQuery = updateEmployeeManagerQuery;
 module.exports.viewEmployeesByManagerQuery = viewEmployeesByManagerQuery;
+module.exports.viewEmployeesByDeptQuery = viewEmployeesByDeptQuery;
 module.exports.viewAllRoles = viewAllRoles;
 module.exports.insertRole = insertRole;
 module.exports.viewAllDepartments = viewAllDepartments;

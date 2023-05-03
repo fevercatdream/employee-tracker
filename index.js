@@ -7,7 +7,8 @@ const {
     insertEmployee,
     updateEmployeeRoleQuery,
     updateEmployeeManagerQuery,
-    viewEmployeesByManager,
+    viewEmployeesByManagerQuery,
+    viewEmployeesByDeptQuery,
     viewAllRoles,
     insertRole,
     viewAllDepartments,
@@ -21,7 +22,19 @@ async function askQuestion() {
             type: "list",
             message: "What would you like to do?",
             name: "choice",
-            choices: ["View All Employees", "Add Employee", "Update Employee Role", "Update Employee Manager", "View Employees By Manager","View All Roles", "Add Role", "View All Departments", "Add Department", "Quit"],
+            choices: [
+                "View All Employees", 
+                "Add Employee", 
+                "Update Employee Role", 
+                "Update Employee Manager", 
+                "View Employees By Manager", 
+                "View Employees By Department",
+                "View All Roles", 
+                "Add Role", 
+                "View All Departments", 
+                "Add Department", 
+                "Quit"
+            ],
         },
     ]);
     switch (answer.choice) {
@@ -43,6 +56,10 @@ async function askQuestion() {
         }
         case "View Employees By Manager": {
             console.table(await viewEmployeesByManager());
+            return askQuestion();
+        }
+        case "View Employees By Department": {
+            console.table(await viewEmployeesByDept());
             return askQuestion();
         }
         case "View All Roles": {
@@ -171,6 +188,24 @@ async function viewEmployeesByManager() {
     }    
 }
 
+// function to view employees by department
+async function viewEmployeesByDept() {
+    const answer = await inquirer.prompt([
+        {
+            type: "list",
+            message: "Select department to see employees? ",
+            name: "chooseDept",
+            // async function mapped to employee name
+            choices: [(await viewAllDepartments()).map(department => department.name)],
+        },
+    ]);
+    if (viewEmployeesByDeptQuery(answer.chooseDept)) {
+        console.log(`Employees by Department`);
+    } else {
+        console.error(err)
+    } 
+}
+
 // function to add a role
 async function addRole() {
     const answer = await inquirer.prompt([
@@ -221,5 +256,6 @@ module.exports.addEmployee = addEmployee;
 module.exports.updateEmployeeRole = updateEmployeeRole;
 module.exports.updateEmployeeManager = updateEmployeeManager;
 module.exports.viewEmployeesByManager = viewEmployeesByManager;
+module.exports.viewEmployeesByDept = viewEmployeesByDept;
 module.exports.addRole = addRole;
 module.exports.addDepartment = addDepartment;
