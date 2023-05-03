@@ -9,6 +9,7 @@ const {
     updateEmployeeManagerQuery,
     viewEmployeesByManagerQuery,
     viewEmployeesByDeptQuery,
+    viewDeptBudgetQuery,
     viewAllRoles,
     insertRole,
     viewAllDepartments,
@@ -31,7 +32,8 @@ async function askQuestion() {
                 "View Employees By Department",
                 "View All Roles", 
                 "Add Role", 
-                "View All Departments", 
+                "View All Departments",
+                "View Department Budget", 
                 "Add Department", 
                 "Quit"
             ],
@@ -72,6 +74,10 @@ async function askQuestion() {
         }
         case "View All Departments": {
             console.table(await viewAllDepartments());
+            return askQuestion();
+        }
+        case "View Department Budget": {
+            console.table(await viewDeptBudget());
             return askQuestion();
         }
         case "Add Department": {
@@ -195,7 +201,7 @@ async function viewEmployeesByDept() {
             type: "list",
             message: "Select department to see employees? ",
             name: "chooseDept",
-            // async function mapped to employee name
+            // async function mapped to department name
             choices: [(await viewAllDepartments()).map(department => department.name)],
         },
     ]);
@@ -234,6 +240,24 @@ async function addRole() {
     };
 }
 
+// function to view total utilized budget of a department by summing employee's salaries
+async function viewDeptBudget() {
+    const answer = await inquirer.prompt([
+        {
+            type: "list",
+            message: "Select department to see budget? ",
+            name: "chooseDept",
+            // async function mapped to department name
+            choices: [(await viewAllDepartments()).map(department => department.name)],
+        },
+    ]);
+    if (viewDeptBudgetQuery(answer.chooseDept)) {
+        console.log(`Employees by Department`);
+    } else {
+        console.error(err)
+    } 
+}
+
 // function to add a department
 async function addDepartment() {
     const answer = await inquirer.prompt([
@@ -257,5 +281,6 @@ module.exports.updateEmployeeRole = updateEmployeeRole;
 module.exports.updateEmployeeManager = updateEmployeeManager;
 module.exports.viewEmployeesByManager = viewEmployeesByManager;
 module.exports.viewEmployeesByDept = viewEmployeesByDept;
+module.exports.viewDeptBudget = viewDeptBudget;
 module.exports.addRole = addRole;
 module.exports.addDepartment = addDepartment;

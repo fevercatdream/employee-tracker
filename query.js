@@ -8,6 +8,7 @@ const {
     updateEmployeeManager,
     viewEmployeesByManager,
     viewEmployeesByDept,
+    viewDeptBudget,
     addRole,
     addDepartment,
 } = require("./index");
@@ -131,7 +132,7 @@ async function viewEmployeesByManagerQuery(manager) {
 async function viewEmployeesByDeptQuery(department) {
     // console.log(db.config, "CONFIG");
     try {
-        const results = await queryAsync(`SELECT CONCAT(manager.first_name, " ", manager.last_name) AS manager, employee.first_name, employee.last_name, title, department.name AS department, salary
+        const results = await queryAsync(`SELECT employee.first_name, employee.last_name, title, department.name AS department, salary, CONCAT(manager.first_name, " ", manager.last_name) AS manager
         FROM employee
         JOIN role
         ON employee.role_id = role.id
@@ -139,6 +140,22 @@ async function viewEmployeesByDeptQuery(department) {
         ON role.department_id = department.id
         LEFT JOIN employee AS manager
         ON employee.manager_id = manager.id
+        WHERE department.name = ?;`, [department]);
+        return results;
+    } catch (err) {
+        console.error(err)
+    }
+}
+
+// function query function to view total utilized budget of a department by summing employee's salaries
+// TODO: need to return bool
+async function viewDeptBudgetQuery(department) {
+    // console.log(db.config, "CONFIG");
+    try {
+        const results = await queryAsync(`SELECT department.name AS department, SUM(salary) AS dept_budget
+        FROM department
+        JOIN role
+        ON role.department_id = department.id
         WHERE department.name = ?;`, [department]);
         return results;
     } catch (err) {
@@ -205,6 +222,7 @@ module.exports.updateEmployeeRoleQuery = updateEmployeeRoleQuery;
 module.exports.updateEmployeeManagerQuery = updateEmployeeManagerQuery;
 module.exports.viewEmployeesByManagerQuery = viewEmployeesByManagerQuery;
 module.exports.viewEmployeesByDeptQuery = viewEmployeesByDeptQuery;
+module.exports.viewDeptBudgetQuery = viewDeptBudgetQuery;
 module.exports.viewAllRoles = viewAllRoles;
 module.exports.insertRole = insertRole;
 module.exports.viewAllDepartments = viewAllDepartments;
