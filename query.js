@@ -21,7 +21,6 @@ const queryAsync = util.promisify(db.query.bind(db));
 
 // function to view all employees
 async function viewAllEmployees() {
-    // console.log(db.config, "CONFIG");
     try {
         const results = await queryAsync(`SELECT employee.id, employee.first_name, employee.last_name, title, department.name AS department, salary, CONCAT(manager.first_name, " ", manager.last_name) AS manager
         FROM employee
@@ -251,6 +250,7 @@ async function insertDepartment(dept_name) {
     }    
 }
 
+// function query to delete a department from the database
 async function deleteDepartmentQuery(delDept) {
     try {
         const results = await queryAsync(`DELETE FROM department

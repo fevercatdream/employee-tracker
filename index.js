@@ -132,8 +132,8 @@ async function addEmployee() {
             type: "list",
             message: "Who is the employee's manager? ",
             name: "manager",
-            // async function mapped to employee name
-            choices: [`None`, ...(await viewAllEmployees()).map(employee => `${employee.first_name} ${employee.last_name}`)],
+            // async function mapped to manager name
+            choices: [`None`, ...(await viewAllEmployees()).map(manager => `${manager.first_name} ${manager.last_name}`)],
         },
     ]);
     if (insertEmployee(answer.firstName, answer.lastName, answer.role, answer.manager)) {
