@@ -178,8 +178,8 @@ async function updateEmployeeManager() {
             type: "list",
             message: "Which employee do you want to assign as manager to the selected employee? ",
             name: "assignManager",
-            // async function mapped to employee name
-            choices: (await viewAllEmployees()).map(manager => `${manager.first_name} ${manager.last_name}`),
+            // async function mapped to manager name
+            choices: [`None`, ...(await viewAllEmployees()).map(manager => `${manager.first_name} ${manager.last_name}`)],
         },
     ]);
     if (updateEmployeeManagerQuery(answer.assignManager, answer.chooseEmployee)) {

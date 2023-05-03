@@ -62,12 +62,18 @@ async function insertEmployee(first_name, last_name, role, manager) {
         const getRole = await queryAsync(`SELECT role.id AS role_id
         FROM role
         WHERE role.title = ?`, [role]);
-        const getManager = await queryAsync(`SELECT employee.id AS manager_id
-        FROM employee
-        WHERE CONCAT(employee.first_name, " ", employee.last_name) = ?`, [manager]);
+        let manager_id;
+        if (manager === `None`) {
+            manager_id = null;
+        } else {
+            const getManager = await queryAsync(`SELECT employee.id AS manager_id
+            FROM employee
+            WHERE CONCAT(employee.first_name, " ", employee.last_name) = ?`, [manager]);
+            manager_id = getManager[0].manager_id;
+        }
         const results = await queryAsync(`INSERT INTO employee (first_name, last_name, role_id, manager_id)
         VALUES
-            ( ?, ?, ?, ?);`, [first_name, last_name, getRole[0].role_id, getManager[0].manager_id]);
+            ( ?, ?, ?, ?);`, [first_name, last_name, getRole[0].role_id, manager_id]);
         return true;
     } catch (err) {
         console.error(err);
@@ -94,15 +100,21 @@ async function updateEmployeeRoleQuery(role, update_employee) {
 // function query to update an employee's manager in the database
 async function updateEmployeeManagerQuery(manager, choose_emp) {
     try {
-        const getManager = await queryAsync(`SELECT employee.id AS manager_id
-        FROM employee
-        WHERE CONCAT(employee.first_name, " ", employee.last_name) = ?`, [manager]);
+        let manager_id;
+        if (manager === `None`) {
+            manager_id = null;
+        } else {
+            const getManager = await queryAsync(`SELECT employee.id AS manager_id
+            FROM employee
+            WHERE CONCAT(employee.first_name, " ", employee.last_name) = ?`, [manager]);
+            manager_id = getManager[0].manager_id;
+        }
         const getEmp = await queryAsync(`SELECT employee.id AS employee_id
         FROM employee
         WHERE CONCAT(employee.first_name, " ", employee.last_name) = ?`, [choose_emp]);
         const results = await queryAsync(`UPDATE employee
         SET manager_id = ?
-        WHERE employee.id = ?;`, [getManager[0].manager_id, getEmp[0].employee_id]);
+        WHERE employee.id = ?;`, [manager_id, getEmp[0].employee_id]);
         return true;
     } catch (err) {
         console.error(err);
